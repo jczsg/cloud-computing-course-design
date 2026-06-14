@@ -14,10 +14,12 @@ env:
   SPARK_IMAGE: pyspark
 
 jobs:
-  build-push-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    outputs:
+      tag: ${{ steps.vars.outputs.tag }}
 
     steps:
       - name: Checkout source
@@ -54,18 +56,19 @@ jobs:
           docker push "$SWR_REGISTRY/$SWR_ORG/$FRONTEND_IMAGE:${{ steps.vars.outputs.tag }}"
           docker push "$SWR_REGISTRY/$SWR_ORG/$SPARK_IMAGE:${{ steps.vars.outputs.tag }}"
 
-      - name: Configure kubectl
-        run: |
-          mkdir -p "$HOME/.kube"
-          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > "$HOME/.kube/config"
-          chmod 600 "$HOME/.kube/config"
+  deploy-to-cce:
+    needs: build-and-push
+    runs-on: self-hosted
+    permissions:
+      contents: read
 
+    steps:
       - name: Update CCE deployments
         run: |
           kubectl -n cloud-course set image deployment/backend \
-            backend="$SWR_REGISTRY/$SWR_ORG/$BACKEND_IMAGE:${{ steps.vars.outputs.tag }}"
+            backend="$SWR_REGISTRY/$SWR_ORG/$BACKEND_IMAGE:${{ needs.build-and-push.outputs.tag }}"
           kubectl -n cloud-course set image deployment/frontend \
-            frontend="$SWR_REGISTRY/$SWR_ORG/$FRONTEND_IMAGE:${{ steps.vars.outputs.tag }}"
+            frontend="$SWR_REGISTRY/$SWR_ORG/$FRONTEND_IMAGE:${{ needs.build-and-push.outputs.tag }}"
           kubectl -n cloud-course rollout status deployment/backend --timeout=180s
           kubectl -n cloud-course rollout status deployment/frontend --timeout=180s
 
