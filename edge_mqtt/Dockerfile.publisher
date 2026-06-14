@@ -1,0 +1,8 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+COPY edge_mqtt/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY edge_mqtt/sensor_publisher.py .
+
+CMD ["python", "sensor_publisher.py"]

@@ -1,0 +1,12 @@
+FROM swr.cn-east-3.myhuaweicloud.com/cloud-swjtu/pyspark:v1
+
+USER root
+WORKDIR /opt/spark/work-dir
+
+COPY spark/wordcount.py /opt/spark/work-dir/wordcount.py
+COPY spark/douban_spark_analysis.py /opt/spark/work-dir/douban_spark_analysis.py
+COPY douban_movies.csv /opt/spark/work-dir/douban_movies.csv
+
+RUN chmod 644 /opt/spark/work-dir/*.py
+
+USER 185

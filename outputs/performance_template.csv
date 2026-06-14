@@ -1,0 +1,4 @@
+﻿engine,workers,seconds
+Pandas local,1,0.0186
+PySpark on CCE,1,
+PySpark on CCE,2,

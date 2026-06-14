@@ -1,0 +1,2 @@
+﻿rows_before,rows_after,dropped_rows,load_seconds,pandas_groupby_seconds,rating_mean,rating_min,rating_max
+67132,22724,44408,1.2369,0.0186,6.5532,2.1,9.8

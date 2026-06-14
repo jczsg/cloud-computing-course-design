@@ -1,0 +1,25 @@
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: wordcount
+  namespace: default
+spec:
+  type: Python
+  mode: cluster
+  image: swr.cn-east-3.myhuaweicloud.com/cloud-swjtu/pyspark:v1
+  imagePullPolicy: IfNotPresent
+  mainApplicationFile: local:///opt/spark/work-dir/wordcount.py
+  sparkVersion: 3.5.0
+  restartPolicy:
+    type: Never
+  driver:
+    cores: 1
+    coreRequest: "100m"
+    memory: 512m
+    serviceAccount: spark
+  executor:
+    cores: 1
+    coreRequest: "100m"
+    instances: 2
+    memory: 1g
+    memoryOverhead: 128m

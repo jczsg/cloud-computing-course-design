@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cloud Course Design</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, "Microsoft YaHei", sans-serif;
+        background: #f6f8fb;
+        color: #1f2937;
+      }
+      main {
+        max-width: 760px;
+        margin: 8vh auto;
+        padding: 32px;
+        background: white;
+        border: 1px solid #d8dee9;
+        border-radius: 8px;
+        box-shadow: 0 12px 30px rgba(31, 41, 55, 0.08);
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-size: 30px;
+      }
+      .meta {
+        color: #4b5563;
+        margin-bottom: 24px;
+      }
+      button {
+        border: 0;
+        background: #2563eb;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      pre {
+        margin-top: 20px;
+        padding: 16px;
+        background: #0f172a;
+        color: #dbeafe;
+        border-radius: 6px;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Cloud Computing Course Design</h1>
+      <div class="meta">Student: Shetoll | Student ID: 2025212245</div>
+      <p>Frontend Nginx proxies API requests to the Flask backend running in Kubernetes.</p>
+      <button id="ping">Call /api/ping</button>
+      <button id="visit">Call /api/visit</button>
+      <pre id="result">Click a button to verify frontend-backend communication.</pre>
+    </main>
+    <script>
+      async function callApi(path) {
+        const result = document.querySelector("#result");
+        result.textContent = "Loading...";
+        const response = await fetch(path);
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+      }
+      document.querySelector("#ping").addEventListener("click", () => callApi("/api/ping"));
+      document.querySelector("#visit").addEventListener("click", () => callApi("/api/visit"));
+    </script>
+  </body>
+</html>

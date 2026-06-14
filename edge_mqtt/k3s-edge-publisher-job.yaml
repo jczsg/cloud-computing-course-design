@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: edge-sensor-publisher
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: publisher
+          image: swr.cn-east-3.myhuaweicloud.com/cloud-swjtu/mqtt-publisher:v1
+          imagePullPolicy: Always
+          env:
+            - name: MQTT_HOST
+              value: "<MQTT_ELB_IP>"
+            - name: MQTT_PORT
+              value: "1883"
+            - name: EDGE_NODE
+              value: "k3s-edge-node-01"
+            - name: MESSAGE_COUNT
+              value: "30"
+            - name: INTERVAL_SECONDS
+              value: "1"
