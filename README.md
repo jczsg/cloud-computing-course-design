@@ -1,114 +1,97 @@
-# 云计算技术课程设计
+# 《云计算》课程设计报告
 
-本仓库为《云计算》课程设计提交仓库，课程代码 `SCAI004712`。
+本仓库与最终报告 PDF 保持一致，用于提交《云计算》课程设计的代码、配置、实验结果与报告材料。
 
-- 班级：计算机2023-02班
-- 组员：吉昌兆（20233112439）、张志峰（2023112441）
-- 分工比例：吉昌兆 50%，张志峰 50%
-- 方向选择：方向 A - Spark 大数据分析
-- 云平台：华为云 CCE，Region 为华东-上海一（`cn-east-3`）
+- 设计题目：云计算技术课程设计实验报告
+- 组号：课程设计小组
+- 成员信息：吉昌兆（20233112439）、张志峰（2023112441）
+- 班级：计算机2023-02 班
+- 指导教师：戴朋林
+- 完成日期：2026.6.15
 - 最终报告：[cloud_course_design_report.pdf](cloud_course_design_report.pdf)
 
-## 项目内容
+## 课程设计任务书
 
-本课程设计包含两部分主任务和三项附加题：
+本课程设计围绕云计算平台搭建与大数据分析展开，主要包括应用容器化、华为云 CCE 集群部署、Kubernetes 服务暴露、Redis 持久化、ConfigMap 挂载、HPA 弹性伸缩、Spark 大数据分析，以及监控、CI/CD、边缘计算等附加内容。报告完整呈现实验过程、关键截图、问题排查与结果分析。
 
-1. 云计算平台搭建：完成 Flask 后端、Redis 数据库、Nginx 前端的容器化、本地联调、SWR 镜像推送、CCE 部署、LoadBalancer 暴露、PVC 持久化、ConfigMap Volume 挂载和 HPA 验证。
-2. Spark 大数据分析：基于豆瓣电影数据集完成 PySpark 数据清洗、Spark SQL 统计查询、性能对比和 Amdahl 定律分析。
-3. 附加题：完成监控系统说明与验证、GitHub Actions 到华为云 SWR/CCE 的 CI/CD 流水线、K3s + MQTT 边缘计算模拟链路。
+## 报告目录
 
-## 目录说明
+报告 PDF 的正文结构如下：
 
 ```text
-app/
-  backend/                 Flask 后端 API 与 Dockerfile.backend
-  frontend/                Nginx 前端页面与 Dockerfile.frontend
-k8s/                       CCE 核心资源 YAML
-spark/                     PySpark 作业、SparkApplication 与 Spark 镜像 Dockerfile
-analysis/                  本地 Pandas 复现实验脚本
-edge_mqtt/                 K3s + MQTT 边缘计算附加题代码与 YAML
-monitoring/                Prometheus/Grafana 监控附加题配置说明
-scripts/                   本地构建、推送、部署和验收脚本
-.github/workflows/         GitHub Actions CI/CD 流水线
-outputs/                   数据分析输出结果和图表
-cloud_course_design_report.pdf   最终课程设计报告
+一、华为云环境信息
+二、第一部分实验记录：云计算平台搭建
+  2.1 任务1：应用容器化
+    2.1.1 任务目标
+    2.1.2 关键截图
+    2.1.3 问题与解决方案
+  2.2 任务2：CCE 集群搭建
+    2.2.1 任务目标
+    2.2.2 关键截图
+  2.3 任务3：应用部署
+    2.3.1 任务目标
+  2.4 任务4：持久化存储验证
+    2.4.1 任务目标
+    2.4.2 关键截图
+  2.5 任务5：ConfigMap Volume 挂载
+    2.5.1 任务目标
+    2.5.2 关键截图
+  2.6 任务6：HPA 弹性伸缩
+    2.6.1 任务目标
+    2.6.2 关键截图
+三、第二部分实验记录：Spark 大数据分析
+  3.1 A-0 环境部署
+  3.2 A-1 数据清洗
+  3.3 A-2 Spark SQL 统计分析
+  3.4 A-3 性能对比与 Amdahl 分析
+  3.5 问题与解决方案汇总
+四、附加题
+  4.1 附加题1：监控系统
+  4.2 附加题2：CI/CD 流水线
+  4.3 附加题3：前沿专题 C-2 K3s + MQTT 边缘计算模拟
+五、任务书逐项对照检查
+六、总结与收获
+七、附录
+  7.1 提交前截图清单
 ```
 
-## 本地联调
+## 华为云环境信息
 
-```bash
-docker compose up --build
-curl http://localhost:5000/api/ping
-curl http://localhost:8080/api/visit
+报告中的实验环境如下：
+
+- 华为云 Region：华东-上海一（`cn-east-3`）
+- CCE 集群名称：`cloud`
+- CCE 集群类型：CCE Standard
+- Kubernetes 版本：`v1.35.3`
+- Worker 节点：4 个 Ready 节点
+- 节点系统：Huawei Cloud EulerOS 2.0
+- 容器运行时：containerd
+- SWR 组织：`cloud-swjtu`
+- 镜像范围：`backend`、`frontend`、`pyspark`、`spark-operator-controller`、MQTT 相关镜像
+
+## 仓库与报告对应关系
+
+```text
+app/backend/                     对应 2.1 应用容器化中的 Flask 后端
+app/frontend/                    对应 2.1 应用容器化中的 Nginx 前端
+docker-compose.yml               对应本地联调验证
+k8s/                             对应 2.2-2.6 CCE 部署、服务暴露、PVC、ConfigMap、HPA
+spark/                           对应第三章 Spark 大数据分析与 Spark 镜像构建
+analysis/                        对应 Pandas 本地复现实验与性能对比
+outputs/                         对应 Spark/Pandas 统计结果与图表
+monitoring/                      对应 4.1 监控系统附加题
+.github/workflows/               对应 4.2 CI/CD 流水线附加题
+edge_mqtt/                       对应 4.3 K3s + MQTT 边缘计算模拟附加题
+cloud_course_design_report.pdf   最终报告 PDF，与提交版保持一致
 ```
 
-后端 `/api/ping` 用于健康检查，`/api/visit` 用于验证前后端链路和 Redis 写入。
+## 团队成员分工
 
-## 镜像构建与推送
-
-仓库内脚本默认使用华为云 SWR：
-
-```powershell
-$env:SWR_REGION="cn-east-3"
-$env:SWR_ORG="cloud-swjtu"
-$env:SWR_REGISTRY="swr.cn-east-3.myhuaweicloud.com"
-$env:IMAGE_TAG="v1"
-$env:SWR_USERNAME="cn-east-3@<AK>"
-$env:SWR_PASSWORD="<SWR temporary login token>"
-
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\01-build-images.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\02-login-push-swr.ps1
-```
-
-如果 Docker BuildKit 推送到 SWR 时出现 manifest 解析问题，可在构建命令中使用 `--provenance=false`，脚本中已按该方式处理。
-
-## CCE 部署
-
-在华为云 CCE 控制台配置集群并准备 kubeconfig 后，可按顺序部署：
-
-```bash
-kubectl apply -f k8s/
-kubectl -n cloud-course get pods -o wide
-kubectl -n cloud-course get svc -o wide
-kubectl -n cloud-course get pvc
-kubectl -n cloud-course get hpa
-```
-
-核心验收点：
-
-- Worker 节点 Ready，Kubernetes 版本满足任务书要求。
-- `backend-svc` 通过公网 ELB 访问 `/api/ping` 返回 `status=ok`。
-- `redis-data-pvc` 处于 `Bound`，删除 Redis Pod 后数据仍可读取。
-- Nginx 配置通过 ConfigMap Volume 挂载。
-- HPA 已创建，并在报告中记录扩缩容验证与 Metrics API 排查过程。
-
-## Spark 大数据分析
-
-Spark 作业相关文件位于 `spark/`：
-
-- `Dockerfile.pyspark`：构建包含 `wordcount.py` 和 `douban_spark_analysis.py` 的 PySpark 镜像。
-- `wordcount.py`：Spark WordCount 示例作业。
-- `douban_spark_analysis.py`：豆瓣电影数据清洗、统计查询和性能记录作业。
-- `sparkapplication-*.yaml`：Spark Operator 提交模板。
-
-本地复现实验脚本位于 `analysis/douban_local_analysis.py`，输出结果位于 `outputs/`。
-
-## CI/CD
-
-GitHub Actions 工作流位于 `.github/workflows/huawei-swr-cce.yml`，实现：
-
-1. 拉取代码；
-2. 构建 backend、frontend、pyspark 镜像；
-3. 登录华为云 SWR 并推送镜像；
-4. 通过自托管 Runner 在 CCE 集群内执行 `kubectl set image` 和 `rollout status`。
-
-工作流依赖 GitHub Actions Secrets：
-
-- `SWR_USERNAME`
-- `SWR_PASSWORD`
-
-真实 SWR 登录口令、kubeconfig、集群 token 不应提交到仓库。
+| 成员 | 分工 |
+| --- | --- |
+| 吉昌兆（20233112439） | 环境搭建、应用部署、实验验证、相关实验内容整理与报告撰写。 |
+| 张志峰（2023112441） | 结构设计、正文整合、排版整理、实验过程记录、结果复核与材料汇总。 |
 
 ## 提交说明
 
-最终提交材料以 `cloud_course_design_report.pdf` 为准，代码仓库用于支撑报告中的构建、部署、Spark 分析和附加题实现。报告中的云端验收截图已经嵌入 PDF，仓库中不提交真实云账号密钥或临时登录口令。
+最终提交以 [cloud_course_design_report.pdf](cloud_course_design_report.pdf) 为准。仓库中的代码和配置用于支撑报告中的实验过程、截图证据、Spark 分析和附加题实现。真实华为云登录口令、SWR 临时 token、kubeconfig 和集群密钥不提交到仓库。
